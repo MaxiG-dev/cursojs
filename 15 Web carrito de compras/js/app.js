@@ -109,11 +109,12 @@ function carritoStorage() {
 // Revisa el LocalStorage al actualizar la pagina y si tiene cursos los agrega al carrito
 revisarLocalStorage();
 function revisarLocalStorage() {
-    if (localStorage.getItem("carritoStorage") === "[]") {
+    const getCarritoStorage = localStorage.getItem("carritoStorage");
+    if (getCarritoStorage === "[]" || getCarritoStorage === null) {
         // No ejecutamos nada
     } else {
         // Actualizamos el objeto y llamamos la funcion carritoHTML
-        const carritoLocalStorage = localStorage.getItem("carritoStorage");
+        const carritoLocalStorage = getCarritoStorage;
         articulosCarrito = JSON.parse(carritoLocalStorage);
         carritoHTML();
     }
