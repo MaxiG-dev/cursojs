@@ -1,7 +1,7 @@
 # cursojs
 
 15 Web carrito de compras
-https://mellow-piroshki-5be0a0.netlify.app/
+https://mellow-piroshki-5be0a0.netlify.app
 
 16 Web enviar Email Formulario
 https://storied-baklava-20ab69.netlify.app
