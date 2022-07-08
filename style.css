@@ -1,0 +1,30 @@
+/* normalize.css v3.0.2 | MIT License | git.io/normalize */
+html {
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif
+}
+body {
+    text-align: center;
+    background: radial-gradient(100% 225% at 100% 0%, #FF0000 0%, #000000 100%), linear-gradient(236deg, #00C2FF 0%, #000000 100%), linear-gradient(135deg, #CDFFEB 0%, #CDFFEB 36%, #009F9D 36%, #009F9D 60%, #07456F 60%, #07456F 67%, #0F0A3C 67%, #0F0A3C 100%);
+    background-blend-mode: overlay, hard-light, normal;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    color: white;
+    text-shadow: #000 0 0 20px;
+}
+
+a {
+    color: white;
+    font-weight: bold;
+    font-size: large;
+    line-height: 2em;
+    text-decoration: none;
+    transition: text-shadow 400ms;
+}
+
+a:hover {
+    text-shadow: #000 0 0 20px,#000 0 0 20px;
+}

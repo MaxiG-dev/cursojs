@@ -1,38 +1,52 @@
 // ! Variables
-const marca = document.querySelector("#marca");
-const year = document.querySelector("#year");
-const minimo = document.querySelector("#minimo");
-const maximo = document.querySelector("#maximo");
-const puertas = document.querySelector("#puertas");
-const transmision = document.querySelector("#transmision");
-const color = document.querySelector("#color");
-const resultado = document.querySelector("#resultado");
+const marca = document.querySelector('#marca');
+const year = document.querySelector('#year');
+const minimo = document.querySelector('#minimo');
+const maximo = document.querySelector('#maximo');
+const puertas = document.querySelector('#puertas');
+const transmision = document.querySelector('#transmision');
+const color = document.querySelector('#color');
+const resultado = document.querySelector('#resultado');
 const maxYear = new Date().getFullYear();
 const minYear = maxYear - 13;
 // Genera un objeto con la busqueda
 const datosBusqueda = {
-    marca: "",
-    year: "",
-    minimo: "",
-    maximo: "",
-    puertas: "",
-    transmision: "",
-    color: "",
+    marca: '',
+    year: '',
+    minimo: '',
+    maximo: '',
+    puertas: '',
+    transmision: '',
+    color: '',
 };
 
 // ! Cargar eventos
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener('DOMContentLoaded', () => {
     mostrarAutos(autos); // Muestra todos los autos al cargar la app
     llenarSelect(); // Llena las opciones de los año !
 });
 // Eventos para los selects de busqueda
-marca.addEventListener("change", e => {datosBusqueda.marca = e.target.value, filtrarAuto();})
-year.addEventListener("change", e => {datosBusqueda.year = e.target.value, filtrarAuto();})
-minimo.addEventListener("change", e => {datosBusqueda.minimo = e.target.value, filtrarAuto();})
-maximo.addEventListener("change", e => {datosBusqueda.maximo = e.target.value, filtrarAuto();})
-puertas.addEventListener("change", e => {datosBusqueda.puertas = e.target.value, filtrarAuto();})
-transmision.addEventListener("change", e => {datosBusqueda.transmision = e.target.value, filtrarAuto();})
-color.addEventListener("change", e => {datosBusqueda.color = e.target.value, filtrarAuto();})
+marca.addEventListener('change', (e) => {
+    (datosBusqueda.marca = e.target.value), filtrarAuto();
+});
+year.addEventListener('change', (e) => {
+    (datosBusqueda.year = e.target.value), filtrarAuto();
+});
+minimo.addEventListener('change', (e) => {
+    (datosBusqueda.minimo = e.target.value), filtrarAuto();
+});
+maximo.addEventListener('change', (e) => {
+    (datosBusqueda.maximo = e.target.value), filtrarAuto();
+});
+puertas.addEventListener('change', (e) => {
+    (datosBusqueda.puertas = e.target.value), filtrarAuto();
+});
+transmision.addEventListener('change', (e) => {
+    (datosBusqueda.transmision = e.target.value), filtrarAuto();
+});
+color.addEventListener('change', (e) => {
+    (datosBusqueda.color = e.target.value), filtrarAuto();
+});
 
 // ! Funciones
 // Mostrar los autos de la base de datos
@@ -40,9 +54,10 @@ function mostrarAutos(autos) {
     limpiarHTML(); // Elimina el HTML previo
     autos.forEach((auto) => {
         // Destructuring del array de la base de datos
-        const { marca, modelo, year, precio, puertas, transmision, color } = auto;
+        const { marca, modelo, year, precio, puertas, transmision, color } =
+            auto;
         // Crea el HTML para cada elemento de la base de datos
-        const autoHTML = document.createElement("p");
+        const autoHTML = document.createElement('p');
         autoHTML.textContent = `
             ${marca} ${modelo} - ${year} - ${puertas} puertas - transmisión: ${transmision} - color: ${color} - $${precio}
         `;
@@ -61,7 +76,7 @@ function limpiarHTML() {
 // Llenar select de años
 function llenarSelect() {
     for (let i = maxYear; i > minYear; i--) {
-        const opcion = document.createElement("option");
+        const opcion = document.createElement('option');
         opcion.value = i;
         opcion.textContent = i;
         year.appendChild(opcion);
@@ -70,7 +85,14 @@ function llenarSelect() {
 
 // Funcion para filtrar autos
 function filtrarAuto() {
-    const resultado = autos.filter(filtrarMarca).filter(filtrarYear).filter(filtrarMinimo).filter(filtrarMaximo).filter(filtrarPuertas).filter(filtrarTransmision).filter(filtrarColor);
+    const resultado = autos
+        .filter(filtrarMarca)
+        .filter(filtrarYear)
+        .filter(filtrarMinimo)
+        .filter(filtrarMaximo)
+        .filter(filtrarPuertas)
+        .filter(filtrarTransmision)
+        .filter(filtrarColor);
     if (resultado.length) {
         mostrarAutos(resultado);
     } else {
@@ -88,27 +110,32 @@ function filtrarYear(auto) {
         return auto.year === parseInt(datosBusqueda.year);
     }
     return auto;
-}function filtrarMinimo(auto) {
+}
+function filtrarMinimo(auto) {
     if (datosBusqueda.minimo) {
         return auto.precio >= datosBusqueda.minimo;
     }
     return auto;
-}function filtrarMaximo(auto) {
+}
+function filtrarMaximo(auto) {
     if (datosBusqueda.maximo) {
         return auto.precio <= datosBusqueda.maximo;
     }
     return auto;
-}function filtrarPuertas(auto) {
+}
+function filtrarPuertas(auto) {
     if (datosBusqueda.puertas) {
         return auto.puertas === parseInt(datosBusqueda.puertas);
     }
     return auto;
-}function filtrarTransmision(auto) {
+}
+function filtrarTransmision(auto) {
     if (datosBusqueda.transmision) {
         return auto.transmision === datosBusqueda.transmision;
     }
     return auto;
-}function filtrarColor(auto) {
+}
+function filtrarColor(auto) {
     if (datosBusqueda.color) {
         return auto.color === datosBusqueda.color;
     }
@@ -120,6 +147,6 @@ function noResultado() {
     limpiarHTML();
     const noResultado = document.createElement('div');
     noResultado.classList.add('alerta', 'error');
-    noResultado.textContent = 'No se encontraron resultados'
+    noResultado.textContent = 'No se encontraron resultados';
     resultado.appendChild(noResultado);
 }
