@@ -35,7 +35,7 @@ function startApp() {
 }
 
 function askPresupuesto() {
-    const presupuesto = 5000; //! prompt('¿Cual es tu presupuesto?');
+    const presupuesto = prompt('¿Cual es tu presupuesto?'); 
     if (
         presupuesto === '' ||
         presupuesto <= 0 ||
@@ -47,6 +47,7 @@ function askPresupuesto() {
     }
     return parseInt(presupuesto);
 }
+
 
 function actualizarPresupuesto() {
     const divRestante = document.querySelector('.restante');
