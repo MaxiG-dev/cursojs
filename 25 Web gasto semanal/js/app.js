@@ -1,179 +1,180 @@
-// ! Variables
-const formulario = document.querySelector('#agregar-gasto');
-const gastoListado = document.querySelector('#gastos ul');
+// ! Variables y Selectores
+const formulario = document.getElementById('agregar-gasto');
+const gastosListado = document.querySelector('#gastos ul');
 
-// ! Events listeners
-eventListener();
-function eventListener() {
-    document.addEventListener('DOMContentLoaded', startApp);
-    formulario.addEventListener('submit', (e) => {
-        e.preventDefault();
-        nuevoGasto();
-    });
+// ! Eventos
+eventListeners();
+function eventListeners() {
+    document.addEventListener('DOMContentLoaded', preguntarPresupuesto);
+    formulario.addEventListener('submit', agregarGasto);
+    gastosListado.addEventListener('click', eliminarGasto);
 }
 
 // ! Classes
 class Presupuesto {
-    constructor(presupuesto, restante) {
-        this.presupuesto = presupuesto;
-        this.restante = restante;
+    constructor(presupuesto) {
+        this.presupuesto = Number(presupuesto);
+        this.restante = Number(presupuesto);
+        this.gastos = [];
+    }
+    nuevoGasto(gasto) {
+        this.gastos = [...this.gastos, gasto];
+        this.calcularRestante();
+    }
+    eliminarGasto(id) {
+        this.gastos = this.gastos.filter((gasto) => gasto.id.toString() !== id);
+        this.calcularRestante();
+    }
+    calcularRestante() {
+        const gastado = this.gastos.reduce(
+            (total, gasto) => total + gasto.cantidad,
+            0
+        );
+        this.restante = this.presupuesto - gastado;
     }
 }
-const presupuestoSave = new Presupuesto();
 
-// ! Arrays
-gastos = [];
+class UI {
+    insertarPresupuesto(cantidad) {
+        document.querySelector('#total').textContent = cantidad.presupuesto;
+        document.querySelector('#restante').textContent = cantidad.restante;
+    }
+    imprimirAlerta(mensaje, tipo) {
+        // Crea el div
+        const divMensaje = document.createElement('div');
+        divMensaje.classList.add('text-center', 'alert');
+        // Si es de tipo error agrega una clase
+        if (tipo === 'error') {
+            divMensaje.classList.add('alert-danger');
+        } else {
+            divMensaje.classList.add('alert-success');
+        }
+        // Mensaje de error
+        divMensaje.textContent = mensaje;
+        // Insertar en el DOM
+        document
+            .querySelector('.primario')
+            .insertBefore(divMensaje, formulario);
 
-// ! Functions
-function startApp() {
-    let askpresupuesto = askPresupuesto();
-    presupuestoSave.presupuesto = askpresupuesto;
-    presupuestoSave.restante = askpresupuesto;
-    sincLocalStorage();
-    actualizarPresupuesto();
-    // TODO Leer LocalStorage y compruebo si esta vacio e insertar tareas y actualizo el array gastos
+        // Quitar el alert despues de 3 segundos
+        setTimeout(() => {
+            document.querySelector('.primario .alert').remove();
+        }, 3000);
+    }
+    // Inserta los gastos a la lista
+    agregarGastoListado(gastos) {
+        // Limpiar HTML
+        this.limpiarHTML();
+        // Iterar sobre los gastos
+        gastos.forEach((gasto) => {
+            const { nombre, cantidad, id } = gasto;
+            // Crear un LI
+            const nuevoGasto = document.createElement('li');
+            nuevoGasto.className =
+                'list-group-item d-flex justify-content-between align-items-center';
+            nuevoGasto.dataset.id = id;
+            // Insertar el gasto
+            nuevoGasto.innerHTML = `
+                ${nombre}
+                <span class="badge badge-primary badge-pill">$ ${cantidad}</span>
+            `;
+            // boton borrar gasto.
+            const btnBorrar = document.createElement('button');
+            btnBorrar.classList.add('btn', 'btn-danger', 'borrar-gasto');
+            btnBorrar.textContent = 'Borrar';
+            nuevoGasto.appendChild(btnBorrar);
+            // Insertar al HTML
+            gastosListado.appendChild(nuevoGasto);
+        });
+    }
+    // Comprueba el presupuesto restante
+    actualizarRestante(restante) {
+        document.querySelector('span#restante').textContent = restante;
+    }
+    // Cambia de color el presupuesto restante
+    comprobarPresupuesto(presupuestoObj) {
+        const { presupuesto, restante } = presupuestoObj;
+        const restanteDiv = document.querySelector('.restante');
+        // Comprobar el 25%
+        if (presupuesto / 4 > restante) {
+            restanteDiv.classList.remove('alert-success', 'alert-warning');
+            restanteDiv.classList.add('alert-danger');
+        } else if (presupuesto / 2 > restante) {
+            restanteDiv.classList.remove('alert-success');
+            restanteDiv.classList.add('alert-warning');
+        } else {
+            restanteDiv.classList.remove('alert-danger', 'alert-warning');
+            restanteDiv.classList.add('alert-success');
+        }
+        // Si presupuesta es igual a 0
+        if (restante <= 0) {
+            ui.imprimirAlerta('El presupuesto se ha agotado', 'error');
+            formulario.querySelector('button[type="submit"]').disabled = true;
+        }
+    }
+    limpiarHTML() {
+        while (gastosListado.firstChild) {
+            gastosListado.removeChild(gastosListado.firstChild);
+        }
+    }
 }
 
-function askPresupuesto() {
-    const presupuesto = prompt('¿Cual es tu presupuesto?'); 
+const ui = new UI();
+
+let presupuesto;
+
+function preguntarPresupuesto() {
+    const presupuestoUsuario = prompt('¿Cual es tu presupuesto?');
     if (
-        presupuesto === '' ||
-        presupuesto <= 0 ||
-        isNaN(presupuesto) ||
-        presupuesto === null
+        presupuestoUsuario === '' ||
+        presupuestoUsuario === null ||
+        isNaN(presupuestoUsuario) ||
+        presupuestoUsuario <= 0
     ) {
         window.location.reload();
-        return;
     }
-    return parseInt(presupuesto);
+    // Presupuesto valido
+    presupuesto = new Presupuesto(presupuestoUsuario);
+    // Agregarlo en el HTML
+    ui.insertarPresupuesto(presupuesto);
 }
 
-
-function actualizarPresupuesto() {
-    const divRestante = document.querySelector('.restante');
-    let { presupuesto, restante } = presupuestoSave;
-    if (gastos.length > 0) {
-        for (let i = 0; i < gastos.length; i++) {
-            restante -= gastos[i].cantidad;
-            insertarGasto(i);
-        }
-    }
-    divRestante.classList.remove('alert-success');
-    divRestante.classList.remove('alert-warning');
-    divRestante.classList.remove('alert-danger');
-    let porcentaje = (restante * 100) / presupuesto;
-    if (porcentaje > 50 || presupuesto === restante) {
-        divRestante.classList.add('alert-success');
-    } else if (porcentaje <= 25) {
-        divRestante.classList.add('alert-danger');
-    } else if (porcentaje <= 50) {
-        divRestante.classList.add('alert-warning');
-    }
-    if (restante <= 0) {
-        formulario.querySelector('button[type=submit]').disabled = true;
-        if (document.querySelector('.primario .alert') !== null) {
-            setTimeout(() => {
-                insertarMensaje('El presupuesto se ha agotado', 'error');
-            }, 2000);
-        } else {
-            insertarMensaje('El presupuesto se ha agotado', 'error');
-        }
+function agregarGasto(e) {
+    e.preventDefault();
+    // Leer del formulario de Gastos
+    const nombre = document.querySelector('#gasto').value;
+    const cantidad = Number(document.querySelector('#cantidad').value);
+    // Comprobar que los campos no esten vacios
+    if (nombre === '' || cantidad === '') {
+        // 2 parametros: mensaje y tipo
+        ui.imprimirAlerta('Ambos campos son obligatorios', 'error');
+    } else if (cantidad <= 0 || isNaN(cantidad)) {
+        // si hay una cantidad negativa o letras...
+        ui.imprimirAlerta('Cantidad no válida', 'error');
     } else {
-        formulario.querySelector('button[type=submit]').disabled = false;
-    }
-    const textPresupuesto = document.querySelector('.presupuesto p');
-    const textRestante = document.querySelector('.restante p');
-    textPresupuesto.textContent = `Presupuesto: $${presupuesto}`;
-    textRestante.textContent = `Restante: $${restante}`;
-}
-
-function nuevoGasto() {
-    const gasto = formulario.children.item(0).children.item(1).value;
-    const cantidad = parseInt(
-        formulario.children.item(1).children.item(1).value
-    );
-    if (gasto === '' || cantidad === '') {
-        insertarMensaje('Todos los campos son obligatorios', 'error');
-        return;
-    }
-    if (Math.round(gasto) <= 0 || Math.round(gasto) >= 0) {
-        insertarMensaje('El gasto debe tener un nombre valido', 'error');
-        return;
-    }
-    if (isNaN(cantidad) || cantidad < 0) {
-        insertarMensaje('La cantidad debe ser un numero entero', 'error');
-        return;
-    }
-    gastos = [...gastos, { gasto: gasto, cantidad: cantidad, id: Date.now() }]; // Update gastos array
-    limpiarHTML();
-    insertarMensaje('Gasto agregado correctamente!', 'success'); // insert HTML
-    actualizarPresupuesto();
-    sincLocalStorage();
-    formulario.reset(); // reset formulario
-}
-
-function insertarGasto(i) {
-    const { gasto, cantidad, id } = gastos[i];
-    const nuevoGasto = document.createElement('li');
-    nuevoGasto.className =
-        'list-group-item d-flex justify-content-between align-items-center';
-    nuevoGasto.dataset.id = id;
-    nuevoGasto.innerHTML = `${gasto} <span class='badge badge-primary badge-pill'>$${cantidad}</span>
-    `;
-    const btnBorrar = document.createElement('button');
-    btnBorrar.classList.add('btn', 'btn-danger', 'borrar-gasto');
-    btnBorrar.innerHTML = 'Borrar &times;';
-    btnBorrar.onclick = () => {
-        borrarGasto(id);
-    };
-    nuevoGasto.appendChild(btnBorrar);
-    gastoListado.appendChild(nuevoGasto);
-}
-
-function insertarMensaje(mensaje, tipo) {
-    const divMensaje = document.createElement('div');
-    if (document.querySelector('.primario .alert') !== null) {
-        document.querySelector('.primario .alert').remove();
-    }
-    divMensaje.classList.add('text-center', 'alert');
-    divMensaje.textContent = mensaje;
-    if (tipo === 'error') {
-        divMensaje.classList.add('alert-danger');
-    } else {
-        divMensaje.classList.add('alert-success');
-    }
-    document.querySelector('.primario').insertBefore(divMensaje, formulario); // insert in HTML
-    setTimeout(() => {
-        divMensaje.remove();
-    }, 2000);
-}
-
-function sincLocalStorage() {
-    if (
-        localStorage.getItem('gastosTest') !== '[]' &&
-        localStorage.getItem('gastosTest') !== null
-    ) {
-        if (gastos.length === 0 || gastos === null) {
-            gastos = JSON.parse(localStorage.getItem('gastosTest'));
-        }
-    }
-    localStorage.setItem('gastosTest', JSON.stringify(gastos));
-}
-
-function limpiarHTML() {
-    while (gastoListado.firstChild) {
-        gastoListado.firstChild.remove();
+        const gasto = { nombre, cantidad, id: Date.now() };
+        // Añadir nuevo gasto
+        presupuesto.nuevoGasto(gasto);
+        // Insertar en el HTML
+        ui.imprimirAlerta('Correcto', 'correcto');
+        // Pasa los gastos para que se impriman...
+        const { gastos } = presupuesto;
+        ui.agregarGastoListado(gastos); // Cambiar la clase que nos avisa si se va terminando
+        ui.comprobarPresupuesto(presupuesto); // Actualiza el presupuesto restante
+        const { restante } = presupuesto;
+        ui.actualizarRestante(restante); // Actualizar cuanto nos queda
+        // Reiniciar el form
+        formulario.reset();
     }
 }
 
-function borrarGasto(id) {
-    this.gastos = this.gastos.filter((gasto) => gasto.id !== id);
-    limpiarHTML();
-    actualizarPresupuesto();
-    insertarMensaje('Gasto eliminado correctamente!')
-    if (this.gastos.length === 0) {
-        localStorage.setItem('gastosTest', JSON.stringify(this.gastos));
-    } else {
-        sincLocalStorage();
+function eliminarGasto(e) {
+    if (e.target.classList.contains('borrar-gasto')) {
+        const { id } = e.target.parentElement.dataset;
+        presupuesto.eliminarGasto(id); // Reembolsar
+        ui.comprobarPresupuesto(presupuesto); // Pasar la cantidad restante para actualizar el DOM
+        const { restante } = presupuesto;
+        ui.actualizarRestante(restante);
+        e.target.parentElement.remove(); // Eliminar del DOM
     }
 }
