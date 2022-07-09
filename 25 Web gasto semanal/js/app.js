@@ -36,7 +36,7 @@ function startApp() {
 
 function askPresupuesto() {
     const presupuesto = 5000; //! prompt('¿Cual es tu presupuesto?');
-    if (presupuesto === '' || presupuesto <= 0 || isNaN(presupuesto)) {
+    if (presupuesto === '' || presupuesto <= 0 || isNaN(presupuesto) || presupuesto === null) {
         window.location.reload();
         return;
     }
@@ -58,6 +58,7 @@ function actualizarPresupuesto() {
         } else {
             console.log('mas que 50');
         }
+        insertarGasto();
     }
     const textPresupuesto = document.querySelector('.presupuesto p')
     const textRestante = document.querySelector('.restante p')
@@ -68,33 +69,45 @@ function nuevoGasto() {
     const gasto = formulario.children.item(0).children.item(1).value;
     const cantidad = parseInt(formulario.children.item(1).children.item(1).value);
     if (gasto === '' || cantidad === '') {
-        insertarMensaje('Todos los campos son obligatorios', 'err1')
+        insertarMensaje('Todos los campos son obligatorios', 'error')
         return;
     }
     if (Math.round(gasto) <= 0 || Math.round(gasto) >= 0) {
-        insertarMensaje('El gasto debe tener un nombre valido', 'err2')
+        insertarMensaje('El gasto debe tener un nombre valido', 'error')
         return;
     }
     if (isNaN(cantidad) || cantidad < 0) {
-        insertarMensaje('La cantidad debe ser un numero entero', 'err3')
+        insertarMensaje('La cantidad debe ser un numero entero', 'error')
         return;
     }
-    gastos = [...gastos, {gasto: gasto, cantidad: cantidad}]; // Update gastos array
+    gastos = [...gastos, {gasto: gasto, cantidad: cantidad, id: Date.now()}]; // Update gastos array
     actualizarPresupuesto();
     sincLocalStorage();
-    insertarMensaje('Gasto agregado correctamente', 'success'); // insert HTML
+    insertarMensaje('Gasto agregado correctamente!', 'success'); // insert HTML
     formulario.reset(); // reset formulario
 }
+function insertarGasto() {
+    const {gasto, cantidad, id} = gastos
+    const nuevoGasto = document.createElement('li');
+    nuevoGasto.className = 'list-group-item d-flex justify-content-between align-items-center';
+
+}
 function insertarMensaje(mensaje, tipo) {
-    if (tipo === 'err1') {
-        console.log(mensaje);
-    } else if (tipo === 'err2') {
-        console.log(mensaje);
-    } else if (tipo === 'err3') {
-        console.log(mensaje);
-    } else {
-        console.log(mensaje);
+    const divMensaje = document.createElement('div');
+    if (document.querySelector('.primario .alert') !== null) {
+        document.querySelector('.primario .alert').remove();
     }
+    divMensaje.classList.add('text-center', 'alert');
+    divMensaje.textContent = mensaje;
+    if (tipo === 'error') {
+        divMensaje.classList.add('alert-danger');
+    } else {
+        divMensaje.classList.add('alert-success');
+    }
+    document.querySelector('.primario').insertBefore(divMensaje, formulario); // insert in HTML
+    setTimeout(() => {
+        divMensaje.remove();
+    }, 2000);
 }
 function sincLocalStorage() {
     if (localStorage.getItem('gastosTest') !== '[]' && localStorage.getItem('gastosTest') !== null) {
