@@ -167,9 +167,9 @@ function limpiarHTML() {
 
 function borrarGasto(id) {
     this.gastos = this.gastos.filter((gasto) => gasto.id !== id);
-    console.log(this.gastos);
     limpiarHTML();
     actualizarPresupuesto();
+    insertarMensaje('Gasto eliminado correctamente!')
     if (this.gastos.length === 0) {
         localStorage.setItem('gastosTest', JSON.stringify(this.gastos));
     } else {
