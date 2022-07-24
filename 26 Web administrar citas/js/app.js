@@ -9,6 +9,7 @@ const sintomasInput = document.querySelector('#sintomas');
 // ! Variables for UI
 const formulario = document.querySelector('#nueva-cita');
 const contenedorCitas = document.querySelector('#citas');
+let editando;
 
 // ! Classes
 class Citas {
@@ -200,4 +201,17 @@ function cargarEdicion(cita) {
     fechaInput.value = fecha;
     horaInput.value = hora;
     sintomasInput.value = sintomas;
+
+    // Fill object
+    citaObj.mascota = mascota;
+    citaObj.propietario = propietario;
+    citaObj.telefono = telefono;
+    citaObj.fecha = fecha;
+    citaObj.hora = hora;
+    citaObj.sintomas = sintomas;
+    citaObj.id = id;
+
+    // Change form button
+    formulario.querySelector('button[type=submit]').textContent = 'Guardar cambios';
+    editando = true;
 }
