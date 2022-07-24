@@ -158,12 +158,20 @@ function nuevaCita(e) {
         ui.imprimirAlerta('Todos los campos son obligatorios', 'error');
         return;
     }
-    
-    // Generate id
-    citaObj.id = Date.now();
+    if (editando) {
+        ui.imprimirAlerta('Se editó correctamente', 'success');
+        formulario.querySelector('button[type=submit]').textContent = 'Crear cita';
+        editando = false;
+    } else {
+        // Generate id
+        citaObj.id = Date.now();
 
-    // Create a new cita
-    administrarCitas.agregarCitas({...citaObj});
+        // Create a new cita
+        administrarCitas.agregarCitas({...citaObj});
+
+        // Show alert
+        ui.imprimirAlerta('Se agregó correctamente', 'success');
+    }
 
     // Reset form and object
     formulario.reset();
