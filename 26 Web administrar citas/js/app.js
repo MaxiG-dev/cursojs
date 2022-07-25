@@ -45,6 +45,7 @@ class UI {
     }
 
     imprimirCitas({citas}) {
+        localStorage.setItem('citasTest', JSON.stringify(citas));
         this.limpiarHTML();
         citas.forEach( cita => {
             const { mascota, propietario, telefono, fecha, hora, sintomas, id} = cita;
@@ -128,6 +129,16 @@ function eventListeners() {
     horaInput.addEventListener('input', datosCita);
     sintomasInput.addEventListener('input', datosCita);
     formulario.addEventListener('submit', nuevaCita);
+    // document.addEventListener('DOMContentLoaded', () => {
+    //     if (localStorage.getItem('citasTest') !== 'undefined' || localStorage.getItem('citasTest') !== null || localStorage.getItem('citasTest') !== '[]') {
+    //         console.log(localStorage.getItem('citasTest'));
+    //         administrarCitas.agregarCitas(JSON.parse(localStorage.getItem('citasTest')));
+    //         console.log([administrarCitas])
+    //         ui.imprimirCitas(administrarCitas)
+    //         // administrarCitas.agregarCitas({...citaObj});
+    //         // ui.imprimirCitas(administrarCitas)
+    //     }
+    // });
 }
 
 // ! Principal object for save inputs
@@ -140,10 +151,10 @@ const citaObj = {
     sintomas: '',
 }
 
-// ! Add dates to principal object
+// ! Add info to principal object
 function datosCita(e) {
     citaObj[e.target.name] = e.target.value;
-    console.log(citaObj);
+    // console.log(citaObj);
 }
 
 // ! Validate and add a new cita to class cita
@@ -223,3 +234,5 @@ function cargarEdicion(cita) {
     formulario.querySelector('button[type=submit]').textContent = 'Guardar cambios';
     editando = true;
 }
+
+// Administrador de cira ver video 8
