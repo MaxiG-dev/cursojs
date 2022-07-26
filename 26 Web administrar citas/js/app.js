@@ -18,9 +18,14 @@ class Citas {
     }
     agregarCitas(cita) {
         this.citas = [...this.citas, cita];
+        localStorage.setItem('citas', (JSON.stringify(this.citas)));
+    }
+    localStorageCitas(array) {
+        this.citas = array;
     }
     eliminarCita(id) {
         this.citas = this.citas.filter( cita => cita.id !== id )
+        localStorage.setItem('citas', (JSON.stringify(this.citas)));
     }
 }
 
@@ -45,7 +50,6 @@ class UI {
     }
 
     imprimirCitas({citas}) {
-        localStorage.setItem('citasTest', JSON.stringify(citas));
         this.limpiarHTML();
         citas.forEach( cita => {
             const { mascota, propietario, telefono, fecha, hora, sintomas, id} = cita;
@@ -129,16 +133,13 @@ function eventListeners() {
     horaInput.addEventListener('input', datosCita);
     sintomasInput.addEventListener('input', datosCita);
     formulario.addEventListener('submit', nuevaCita);
-    // document.addEventListener('DOMContentLoaded', () => {
-    //     if (localStorage.getItem('citasTest') !== 'undefined' || localStorage.getItem('citasTest') !== null || localStorage.getItem('citasTest') !== '[]') {
-    //         console.log(localStorage.getItem('citasTest'));
-    //         administrarCitas.agregarCitas(JSON.parse(localStorage.getItem('citasTest')));
-    //         console.log([administrarCitas])
-    //         ui.imprimirCitas(administrarCitas)
-    //         // administrarCitas.agregarCitas({...citaObj});
-    //         // ui.imprimirCitas(administrarCitas)
-    //     }
-    // });
+    document.addEventListener('DOMContentLoaded', () => {
+        if (localStorage.citas !== '' && localStorage.citas !== undefined && localStorage.citas !== null && localStorage.citas !== '[null]' && localStorage.citas !== '[]') {
+            console.log('test local storage');
+            administrarCitas.localStorageCitas(JSON.parse(localStorage.getItem('citas')));
+            ui.imprimirCitas(administrarCitas)
+        }
+    })
 }
 
 // ! Principal object for save inputs
