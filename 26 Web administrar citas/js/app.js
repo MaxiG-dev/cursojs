@@ -27,6 +27,10 @@ class Citas {
         this.citas = this.citas.filter( cita => cita.id !== id )
         localStorage.setItem('citas', (JSON.stringify(this.citas)));
     }
+    editarCita(citaActualizada) {
+        this.citas = this.citas.map( cita => cita.id === citaActualizada.id ? citaActualizada : cita );
+        localStorage.setItem('citas', (JSON.stringify(this.citas)));
+    }
 }
 
 class UI {
@@ -171,6 +175,7 @@ function nuevaCita(e) {
         return;
     }
     if (editando) {
+        administrarCitas.editarCita({...citaObj})
         ui.imprimirAlerta('Se editó correctamente', 'success');
         formulario.querySelector('button[type=submit]').textContent = 'Crear cita';
         editando = false;
