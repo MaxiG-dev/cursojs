@@ -1,3 +1,3 @@
 # cursojs
 
-https://maxig-dev-cursojs.netlify.app/
+https://maxig-dev-cursojs.netlify.app
