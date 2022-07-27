@@ -139,7 +139,6 @@ function eventListeners() {
     formulario.addEventListener('submit', nuevaCita);
     document.addEventListener('DOMContentLoaded', () => {
         if (localStorage.citas !== '' && localStorage.citas !== undefined && localStorage.citas !== null && localStorage.citas !== '[null]' && localStorage.citas !== '[]') {
-            console.log('test local storage');
             administrarCitas.localStorageCitas(JSON.parse(localStorage.getItem('citas')));
             ui.imprimirCitas(administrarCitas)
         }
@@ -159,7 +158,6 @@ const citaObj = {
 // ! Add info to principal object
 function datosCita(e) {
     citaObj[e.target.name] = e.target.value;
-    // console.log(citaObj);
 }
 
 // ! Validate and add a new cita to class cita
@@ -240,5 +238,3 @@ function cargarEdicion(cita) {
     formulario.querySelector('button[type=submit]').textContent = 'Guardar cambios';
     editando = true;
 }
-
-// Administrador de cira ver video 8
