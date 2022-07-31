@@ -9,4 +9,3 @@ export const sintomasInput = document.querySelector('#sintomas');
 // ! Variables for UI
 export const formulario = document.querySelector('#nueva-cita');
 export const contenedorCitas = document.querySelector('#citas');
-
